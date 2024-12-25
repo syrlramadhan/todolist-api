@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"go-restful/util"
 	"os"
 )
 
@@ -19,19 +20,15 @@ func OpenConnectionPostgres() (*sql.DB, error) {
 	psqlMerge := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, pwd, dbName)
 
 	db, err := sql.Open("postgres", psqlMerge)
-	if err != nil {
-		panic(err)
-	}
+	util.SendPanicIfError(err)
+
 	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	util.SendPanicIfError(err)
+
 	return db, nil
 }
 
 func GetEnv() {
 	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
+	util.SendPanicIfError(err)
 }

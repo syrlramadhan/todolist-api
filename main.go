@@ -24,7 +24,11 @@ func main() {
 
 	router := httprouter.New()
 
+	//create
 	router.POST("/api/v1/todolist/create", todoListController.CreateTodoList)
+
+	//update
+	router.POST("/api/v1/todolist/update/:todoListId", todoListController.UpdateTodoList)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

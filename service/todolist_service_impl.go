@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"database/sql"
-	"github.com/google/uuid"
 	"go-restful/dto"
 	"go-restful/model"
 	"go-restful/repository"
 	"go-restful/util"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type todoListServiceImpl struct {
@@ -50,4 +51,21 @@ func convertToResponseDTO(mstTodoList model.MstTodoList) dto.TodoListResponseDTO
 		Status:      mstTodoList.Status,
 		CreatedAt:   time.Now(),
 	}
+}
+
+func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListRequest dto.TodoListUpdateRequestDTO) dto.TodoListResponseDTO {
+	tx, err := t.DB.Begin()
+	util.SendPanicIfError(err)
+	defer util.CommitOrRollBack(tx)
+
+	todoList, err := t.TodoListRepository.FindById(ctx, tx, todoListRequest.Id)
+	util.SendPanicIfError(err)
+	
+	todoList.Title = todoListRequest.Title
+	todoList.Description = todoListRequest.Description
+	todoList.Status = todoListRequest.Status
+
+	todoList = t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
+
+	return util.ToTodoListResponse(todoList)
 }

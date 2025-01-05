@@ -11,6 +11,21 @@ import (
 	"net/http"
 )
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	fmt.Print("coconut restfull api")
 
@@ -36,9 +51,11 @@ func main() {
 	//delete
 	router.DELETE("/api/v1/todolist/delete/:todoListId", todoListController.DeleteTodoList)
 
+	handler := corsMiddleware(router)
+
 	server := http.Server{
 		Addr:    "localhost:3000",
-		Handler: router,
+		Handler: handler,
 	}
 
 	errServer := server.ListenAndServe()

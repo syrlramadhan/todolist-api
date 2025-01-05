@@ -52,7 +52,7 @@ func (t *todoListRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id st
 
 func (t *todoListRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit int) []model.MstTodoList {
 	query := `SELECT id, title, description, status FROM mst_todolist LIMIT $1`
-	rows, err := tx.Query(query, limit)
+	rows, err := tx.QueryContext(ctx, query, limit)
 	util.SendPanicIfError(err)
 	defer rows.Close()
 

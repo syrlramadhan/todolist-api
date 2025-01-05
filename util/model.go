@@ -7,9 +7,10 @@ import (
 
 func ToTodoListResponse(todolist model.MstTodoList) dto.TodoListResponseDTO {
 	return dto.TodoListResponseDTO{
-		Title: todolist.Title,
+		Id:          todolist.ID,
+		Title:       todolist.Title,
 		Description: todolist.Description,
-		Status: todolist.Status,
+		Status:      todolist.Status,
 	}
 }
 

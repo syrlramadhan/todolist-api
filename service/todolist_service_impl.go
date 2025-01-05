@@ -80,3 +80,16 @@ func (t *todoListServiceImpl) FindAll(ctx context.Context, limit int) []dto.Todo
 
 	return util.ToTodoListListResponse(todolist)
 }
+
+func (t *todoListServiceImpl) DeleteTodoList(ctx context.Context, todoListId string) dto.TodoListResponseDTO {
+	tx, err := t.DB.Begin()
+	util.SendPanicIfError(err)
+	defer util.CommitOrRollBack(tx)
+
+	todoList, err := t.TodoListRepository.FindById(ctx, tx, todoListId)
+	util.SendPanicIfError(err)
+
+	list := t.TodoListRepository.DeleteTodoList(ctx, tx, todoList)
+
+	return util.ToTodoListResponse(list)
+}

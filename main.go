@@ -33,6 +33,9 @@ func main() {
 	//update
 	router.PUT("/api/v1/todolist/update/:todoListId", todoListController.UpdateTodoList)
 
+	//delete
+	router.DELETE("/api/v1/todolist/delete/:todoListId", todoListController.DeleteTodoList)
+
 	server := http.Server{
 		Addr:    "localhost:3000",
 		Handler: router,

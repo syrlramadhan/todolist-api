@@ -11,4 +11,5 @@ type TodoListRepository interface {
 	UpdateTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) model.MstTodoList
 	FindById(ctx context.Context, tx *sql.Tx, id string) (model.MstTodoList, error)
 	FindAll(ctx context.Context, tx *sql.Tx, limit int) []model.MstTodoList
+	DeleteTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) model.MstTodoList
 }

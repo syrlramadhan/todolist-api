@@ -23,7 +23,12 @@ func (t todoListControllerImpl) CreateTodoList(writer http.ResponseWriter, reque
 	requestDTO := dto.TodoListRequestDTO{}
 	util.ReadFromRequestBody(request, &requestDTO)
 	responseDTO := t.TodoListService.CreateTodoList(request.Context(), requestDTO)
-	util.WriteToResponseBody(writer, responseDTO)
+	response := dto.ResponseList {
+		Code: 200,
+		Status: "OK",
+		Data: responseDTO,
+	}
+	util.WriteToResponseBody(writer, response)
 }
 
 func (t todoListControllerImpl) UpdateTodoList(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -34,11 +39,15 @@ func (t todoListControllerImpl) UpdateTodoList(writer http.ResponseWriter, reque
 	todoListRequest.Id = todoListID
 
 	responseDTO := t.TodoListService.UpdateTodoList(request.Context(), todoListRequest)
-	util.WriteToResponseBody(writer, responseDTO)
+	response := dto.ResponseList {
+		Code: 200,
+		Status: "OK",
+		Data: responseDTO,
+	}
+	util.WriteToResponseBody(writer, response)
 }
 
 func (t todoListControllerImpl) FindAll(writter http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	// search := request.URL.Query().Get("search")
 	limitStr := request.URL.Query().Get("limit")
 
 	limit := util.GetLimitValue(limitStr)
@@ -53,4 +62,18 @@ func (t todoListControllerImpl) FindAll(writter http.ResponseWriter, request *ht
 
 	writter.Header().Add("Content-Type", "application/json")
 	util.WriteToResponseBody(writter, response)
+}
+
+func (t todoListControllerImpl) DeleteTodoList(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	todoListId := params.ByName("todoListId")
+
+	responseDTO := t.TodoListService.DeleteTodoList(request.Context(), todoListId)
+	response := dto.ResponseList {
+		Code: 200,
+		Status: "OK",
+		Data: responseDTO,
+	}
+
+	writer.Header().Add("Content-Type", "application/json")
+	util.WriteToResponseBody(writer, response)
 }

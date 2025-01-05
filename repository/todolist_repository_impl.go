@@ -66,3 +66,11 @@ func (t *todoListRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit 
 
 	return todolist
 }
+
+func (t *todoListRepositoryImpl) DeleteTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) model.MstTodoList {
+	query := `DELETE FROM mst_todolist WHERE id = $1`
+	_, err := tx.ExecContext(ctx, query, todoList.ID)
+	util.SendPanicIfError(err)
+
+	return todoList
+}

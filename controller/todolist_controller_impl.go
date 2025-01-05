@@ -36,3 +36,21 @@ func (t todoListControllerImpl) UpdateTodoList(writer http.ResponseWriter, reque
 	responseDTO := t.TodoListService.UpdateTodoList(request.Context(), todoListRequest)
 	util.WriteToResponseBody(writer, responseDTO)
 }
+
+func (t todoListControllerImpl) FindAll(writter http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	// search := request.URL.Query().Get("search")
+	limitStr := request.URL.Query().Get("limit")
+
+	limit := util.GetLimitValue(limitStr)
+
+	todolist := t.TodoListService.FindAll(request.Context(), limit)
+	response := dto.ResponseList {
+		Code: 200,
+		Status: "OK",
+		Data: todolist,
+		Limit: limit,
+	}
+
+	writter.Header().Add("Content-Type", "application/json")
+	util.WriteToResponseBody(writter, response)
+}

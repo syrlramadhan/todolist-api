@@ -49,3 +49,20 @@ func (t *todoListRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, id st
 		return todoList, errors.New("id todolist not found")
 	}
 }
+
+func (t *todoListRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, limit int) []model.MstTodoList {
+	query := `SELECT id, title, description, status FROM mst_todolist LIMIT $1`
+	rows, err := tx.Query(query, limit)
+	util.SendPanicIfError(err)
+	defer rows.Close()
+
+	var todolist []model.MstTodoList
+	for rows.Next() {
+		list := model.MstTodoList{}
+		err := rows.Scan(&list.ID, &list.Title, &list.Description, &list.Status)
+		util.SendPanicIfError(err)
+		todolist = append(todolist, list)
+	}
+
+	return todolist
+}

@@ -46,6 +46,7 @@ func (t *todoListServiceImpl) CreateTodoList(ctx context.Context, todoListReques
 
 func convertToResponseDTO(mstTodoList model.MstTodoList) dto.TodoListResponseDTO {
 	return dto.TodoListResponseDTO{
+		Id:          mstTodoList.ID,
 		Title:       mstTodoList.Title,
 		Description: mstTodoList.Description,
 		Status:      mstTodoList.Status,
@@ -60,7 +61,7 @@ func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListReques
 
 	todoList, err := t.TodoListRepository.FindById(ctx, tx, todoListRequest.Id)
 	util.SendPanicIfError(err)
-	
+
 	todoList.Title = todoListRequest.Title
 	todoList.Description = todoListRequest.Description
 	todoList.Status = todoListRequest.Status
@@ -68,4 +69,14 @@ func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListReques
 	todoList = t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
 
 	return util.ToTodoListResponse(todoList)
+}
+
+func (t *todoListServiceImpl) FindAll(ctx context.Context, limit int) []dto.TodoListResponseDTO {
+	tx, err := t.DB.Begin()
+	util.SendPanicIfError(err)
+	defer util.CommitOrRollBack(tx)
+
+	todolist := t.TodoListRepository.FindAll(ctx, tx, limit)
+
+	return util.ToTodoListListResponse(todolist)
 }
